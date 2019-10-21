@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Player</title>
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+   <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+    <div style="width:100%;background: #231e1e">
+        <input class="urlInput" id="urlInput" type="text" value="" placeholder="YouTube URL" />
+        <button class="addBtn">Add</button>
+    </div>
+    <div id="videoLayer" style="width:70%;height:100%;display:inline-block">
+        <div class="playVideo" id="player" style="width:100%;height:100%;background:black"></div>
+    </div>
+    <div class="list">
+        <ul>
+        </ul>
+    </div>
+    <script src="http://www.youtube.com/iframe_api"></script>
+    <script>
+        $(".addBtn").click(function() {
+            var str = $('.urlInput').val();
+            if (str != undefined || str != '') {
+                var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|\?v=)([^#\&\?]*).*/;
+                var match = str.match(regExp);
+                if (match && match[2].length == 11) {
+                    var res = str.split("v=");
+
+                    var videoId = res[1];
+
+                    var apiKey = 'AIzaSyBz2dXSFYFpvc64GQBAv-bR5Zf2D0nTBZY'
+
+                    $.ajax({
+                        url: "https://www.googleapis.com/youtube/v3/videos?id=" + videoId + "&key=" + apiKey + "&fields=items(snippet(title))&part=snippet",
+                        dataType: "jsonp",
+                        success: function(data) {
+                            console.log(data.items.length)
+                            if (data.items.length != 0) {
+                                $(".list ul").append('<li  class="' + videoId + '" > <span class="glyphicon  glyphicon-upload mvup"></span><span class="glyphicon glyphicon-download dwn"></span> <a id="' + videoId + '">' + data.items[0].snippet.title + '</a><span class="glyphicon  glyphicon-remove rmv"></span>' + '</li>');
+
+                                $("body #urlInput").val('');
+                            } else {
+                                alert("check URL")
+                                $("body #urlInput").val('');
+                            }
+
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(textStatus, +' | ' + errorThrown);
+                        }
+                    });
+                } else {
+                    alert("invalid Url")
+                }
+            }
+        });
+
+        jQuery(document).ready(function($) {
+            jQuery('body').on('click', '.list ul li a', function() {
+                var videoIds = $(this).attr("id");
+
+                $('#player').html('<iframe id="player_' + videoIds + '" width="100%" height="100%" src="http://www.youtube.com/embed/' + videoIds + '?autoplay=1&enablejsapi=1" frameborder="0" allowfullscreen></iframe>');
+
+                new YT.Player('player_' + videoIds, {
+                    events: {
+                        'onStateChange': function onPlayerStateChange(event) {
+                            console.log(event.data)
+                            if (event.data == YT.PlayerState.ENDED) {
+
+                                $('#player').html('')
+
+                                $(".list ul li." + videoIds).remove();
+
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        jQuery('body').on('click', '.list ul li .mvup', function() {
+            var $current = $(this).closest('li')
+            var $previous = $current.prev('li');
+            if ($previous.length !== 0) {
+                $current.insertBefore($previous);
+            }
+            return false;
+        });
+
+        jQuery('body').on('click', '.list ul li .dwn', function() {
+            var $current = $(this).closest('li')
+            var $next = $current.next('li');
+            if ($next.length !== 0) {
+                $current.insertAfter($next);
+            }
+            return false;
+        });
+
+        jQuery('body').on('click', '.list ul li .rmv', function() {
+            var videoIds = $(this).closest('li').attr("class");
+            var $current = $(this).closest('li').remove();
+
+            var x = $('#player iframe').attr("id");
+            var res = x.split("player_");
+            if (videoIds == res[1]) {
+                $('#player').html('')
+            }
+
+        });
+    </script>
+</body>
+
+</html>

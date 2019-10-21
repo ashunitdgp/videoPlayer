@@ -1,0 +1,67 @@
+ html {
+            height: 100%;
+        }
+        
+        body {
+            height: 100%;
+            margin: 0px;
+        }
+        
+        .urlInput {
+            margin: 5px;
+            width: 65%;
+            height: 25px;
+            background: transparent;
+            padding: 5px;
+            border: none;
+            border-bottom: 1px solid #7d7575;
+            color: #fff;
+        }
+        
+        .addBtn {
+            width: 5%
+        }
+        
+        .list {
+            height: 100%;
+            width: 30%;
+            float: right;
+            background: #3c3333;
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        ul li {
+            height: 30px;
+            color: #fff;
+            font-size: 20px;
+            border-bottom: 1px solid #fff;
+            display: flex;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        ul li a {
+            height: 30px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 67%;
+        }
+        
+        ul li a:hover {
+            color: red;
+            text-decoration: none;
+        }
+        
+        .glyphicon {
+            right: 5px;
+        }
+        
+        .glyphicon.rmv {
+            width: 75px;
+            text-align: right;
+        }
